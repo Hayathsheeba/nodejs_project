@@ -1,28 +1,30 @@
 version: 0.2
- 
+
 phases:
-  pre_build:
+  install:
+    runtime-versions:
+      nodejs: 18  # You can specify your required Node.js version here
     commands:
-      - echo Logging in to Amazon ECR...
-      - aws --version
-      
-      - REPOSITORY_URI=337909742643.dkr.ecr.us-east-1.amazonaws.com/myrepo/cicd
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${COMMIT_HASH:=latest}
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - echo Installing dependencies...
+      - npm install  # Install dependencies
+
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - echo Running build...
+      - npm run build  # Run your build process (only if needed)
+
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"nginx-js","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - echo Running tests...
+      - npm test  # Run tests using your defined test command
+
 artifacts:
-    files: imagedefinitions.json
+  files:
+    - '**/*'
+  discard-paths: yes
+  base-directory: .  # Optional, specify if you want to control where the build artifacts are located
+
+cache:
+  paths:
+    - 'node_modules/**/*'  # Cache node_modules to speed up future builds
+
