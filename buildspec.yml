@@ -18,8 +18,13 @@ phases:
       - echo Running tests...
       - npm test  # Run tests using your defined test command
 
-cache:
-  paths:
-    - 'node_modules/**/*'  # Cache node_modules to speed up future builds
+  deploy:
+    commands:
+      - echo Deploying to AWS Amplify...
+      - npm install -g @aws-amplify/cli  # Install the Amplify CLI
+      - amplify status  # Check the status of your Amplify app
+      - amplify push  # Deploy the app to AWS Amplify
+
+
 
 
