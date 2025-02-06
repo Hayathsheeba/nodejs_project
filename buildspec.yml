@@ -18,13 +18,8 @@ phases:
       - echo Running tests...
       - npm test  # Run tests using your defined test command
 
-artifacts:
-  files:
-    - '**/*'
-  discard-paths: yes
-  base-directory: .  # Optional, specify if you want to control where the build artifacts are located
-
 cache:
   paths:
     - 'node_modules/**/*'  # Cache node_modules to speed up future builds
+
 
